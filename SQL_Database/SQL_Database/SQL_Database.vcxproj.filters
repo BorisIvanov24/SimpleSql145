@@ -18,10 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Column.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IntegerColumn.cpp">
+    <ClCompile Include="MyString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,10 +29,7 @@
     <ClInclude Include="MyVector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Column.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IntegerColumn.h">
+    <ClInclude Include="MyString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

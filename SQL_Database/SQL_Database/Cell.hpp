@@ -6,6 +6,7 @@ class Cell
 public:
 	Cell() = default;
 	Cell(T* value);
+	Cell(const T& value);
 	Cell(const Cell<T>& other);
 	Cell(Cell<T>&& other) noexcept;
 	Cell<T>& operator=(const Cell<T>& other);
@@ -50,6 +51,12 @@ Cell<T>::Cell(T* value) : value(value)
 }
 
 template<class T>
+Cell<T>::Cell(const T& value)
+{
+	this->value = new T(value);
+}
+
+template<class T>
 Cell<T>::Cell(const Cell<T>& other)
 {
 		copyFrom(other);
@@ -70,7 +77,7 @@ Cell<T>& Cell<T>::operator=(const Cell<T>& other)
 template<class T>
 Cell<T>::Cell(Cell<T>&& other) noexcept
 {
-	moveFrom(other);
+	moveFrom(std::move(other));
 }
 
 template<class T>
@@ -79,7 +86,7 @@ Cell<T>& Cell<T>::operator=(Cell<T>&& other) noexcept
 	if (this != &other)
 	{
 		free();
-		moveFrom(other);
+		moveFrom(std::move(other));
 	}
 
 	return *this;

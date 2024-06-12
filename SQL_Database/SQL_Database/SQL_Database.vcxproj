@@ -127,14 +127,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Column.cpp" />
-    <ClCompile Include="IntegerColumn.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyString.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cell.hpp" />
-    <ClInclude Include="Column.h" />
-    <ClInclude Include="IntegerColumn.h" />
+    <ClInclude Include="MyString.h" />
     <ClInclude Include="MyVector.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
