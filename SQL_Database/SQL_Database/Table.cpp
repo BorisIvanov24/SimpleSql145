@@ -1,0 +1,209 @@
+#include "Table.h"
+
+Table::Table(const Table& other)
+{
+	copyFrom(other);
+}
+
+Table::Table(Table&& other) noexcept
+{
+	moveFrom(std::move(other));
+}
+
+Table& Table::operator=(const Table& other)
+{
+	if (this != &other)
+	{
+		free();
+		copyFrom(other);
+	}
+
+	return *this;
+}
+
+Table& Table::operator=(Table&& other) noexcept
+{
+	if (this != &other)
+	{
+		free();
+		moveFrom(std::move(other));
+	}
+
+	return *this;
+}
+
+Table::~Table()
+{
+	free();
+}
+
+Table::Table(const MyString& name)
+{
+	this->name = name;
+}
+
+Table::Table(MyString&& name)
+{
+	this->name = std::move(name);
+}
+
+const MyString& Table::getName() const
+{
+	return name;
+}
+
+size_t Table::getColumnsCount() const
+{
+	return size;
+}
+
+void Table::addColumn(Column* ptr)
+{
+	resize();
+	columns[size++] = ptr;
+
+	fillEmpty();
+
+	if (ptr->getSize() > rowsCount)
+		rowsCount = ptr->getSize();
+}
+
+void Table::removeColumn(unsigned index)
+{
+	if (index >= size)
+		throw std::invalid_argument("Out of range!");
+
+	Column** temp = new Column * [size - 1];
+
+	for (int i = 0; i < size; i++)
+	{
+		if (i == index)
+			continue;
+
+		temp[i] = columns[i];
+	}
+
+	delete[] columns;
+	columns = temp;
+}
+
+void Table::saveToBinaryFile(std::ofstream& ofs) const
+{
+	name.saveToBinaryFile(ofs);
+
+	ofs.write(reinterpret_cast<const char*>(&size), sizeof(size_t));
+	ofs.write(reinterpret_cast<const char*>(&rowsCount), sizeof(size_t));
+
+	for (int i = 0; i < size; i++)
+	{
+		columns[i]->saveToBinaryFile(ofs);
+	}
+}
+
+void Table::loadFromBinaryFile(std::ifstream& ifs)
+{
+	free();
+
+	name.loadFromBinaryFile(ifs);
+
+	ifs.read(reinterpret_cast<char*>(&size), sizeof(size_t));
+	ifs.read(reinterpret_cast<char*>(&rowsCount), sizeof(size_t));
+
+	if (size != 0)
+	columns = new Column* [size];
+
+	for (int i = 0; i < size; i++)
+	{
+		columns[i] = new Column();
+		columns[i]->loadFromBinaryFile(ifs);
+	}
+}
+
+const OptionalString& Table::getValue(unsigned rowIndex, unsigned colIndex) const
+{
+	if (rowIndex >= rowsCount || colIndex >= size)
+		throw std::invalid_argument("Out of range!");
+
+	return columns[colIndex]->getValue(rowIndex);
+}
+
+void Table::setValue(const OptionalString& value, unsigned rowIndex, unsigned colIndex)
+{
+	/*if (rowIndex >= rowsCount || colIndex >= size)
+		throw std::invalid_argument("Out of range!");*/
+
+	if (rowIndex > this->rowsCount)
+		rowsCount = rowIndex + 1;
+
+	columns[colIndex]->setValue(value, rowIndex);
+
+	fillEmpty();
+}
+
+size_t Table::getRowsCount() const
+{
+	return rowsCount;
+}
+
+size_t Table::getColsCount() const
+{
+	return size;
+}
+
+void Table::copyFrom(const Table& other)
+{
+	name = other.name;
+
+	columns = new Column* [other.size];
+
+	for (int i = 0; i < other.size; i++)
+	{
+		columns[i] = new Column(*(other.columns[i]));
+	}
+
+	size = other.size;
+	rowsCount = other.rowsCount;
+}
+
+void Table::moveFrom(Table&& other)
+{
+	name = std::move(other.name);
+
+	columns = other.columns;
+	other.columns = nullptr;
+
+	size = other.size;
+	rowsCount = other.rowsCount;
+}
+
+void Table::free()
+{
+	for (int i = 0; i < size; i++)
+		delete columns[i];
+
+	delete[] columns;
+}
+
+void Table::resize()
+{
+	Column** temp = new Column* [size + 1];
+
+	for (int i = 0; i < size; i++)
+	{
+		temp[i] = columns[i];
+	}
+
+	delete[] columns;
+	columns = temp;
+}
+
+void Table::fillEmpty()
+{
+	for (int i = 0; i < size; i++)
+	{
+		while (columns[i]->getSize() < rowsCount)
+		{
+			columns[i]->addNullValue();
+		}
+	}
+}

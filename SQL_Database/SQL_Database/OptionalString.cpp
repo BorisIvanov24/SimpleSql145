@@ -1,4 +1,4 @@
-#include "MyString.h"
+#include "OptionalString.h"
 #include <cstring>
 #include <algorithm>
 #include <fstream>
@@ -22,9 +22,7 @@ static unsigned dataToAllocByStringLen(unsigned stringLength)
     return std::max(roundToPowerOfTwo(stringLength + 1), 16u);
 }
 
-MyString::MyString() : MyString("") {}
-
-MyString::MyString(const char* data)
+OptionalString::OptionalString(const char* data)
 {
     _size = std::strlen(data);
     _allocatedDataSize = dataToAllocByStringLen(_size);
@@ -32,7 +30,7 @@ MyString::MyString(const char* data)
     std::strcpy(_data, data);
 }
 
-MyString::MyString(size_t stringLength)
+OptionalString::OptionalString(size_t stringLength)
 {
     _allocatedDataSize = dataToAllocByStringLen(stringLength);
     _data = new char[_allocatedDataSize];
@@ -40,17 +38,17 @@ MyString::MyString(size_t stringLength)
     _data[0] = '\0';
 }
 
-MyString::MyString(const MyString& other)
+OptionalString::OptionalString(const OptionalString& other)
 {
     copyFrom(other);
 }
-MyString::MyString(MyString&& other) noexcept
+OptionalString::OptionalString(OptionalString&& other) noexcept
 {
     moveFrom(std::move(other));
 }
 
 
-void MyString::moveFrom(MyString&& other)
+void OptionalString::moveFrom(OptionalString&& other)
 {
     _data = other._data;
     other._data = nullptr;
@@ -63,7 +61,7 @@ void MyString::moveFrom(MyString&& other)
 }
 
 
-MyString& MyString::operator=(const MyString& other)
+OptionalString& OptionalString::operator=(const OptionalString& other)
 {
     if (this != &other) {
         free();
@@ -72,7 +70,7 @@ MyString& MyString::operator=(const MyString& other)
     return *this;
 }
 
-MyString& MyString::operator=(MyString&& other) noexcept
+OptionalString& OptionalString::operator=(OptionalString&& other) noexcept
 {
     if (this != &other)
     {
@@ -83,51 +81,61 @@ MyString& MyString::operator=(MyString&& other) noexcept
 }
 
 
-MyString::~MyString()
+OptionalString::~OptionalString()
 {
     free();
 }
 
-size_t MyString::getCapacity() const
+bool OptionalString::hasValue() const
+{
+    return (_data != nullptr);
+}
+
+size_t OptionalString::getCapacity() const
 {
     return _allocatedDataSize - 1;
 }
 
-size_t MyString::getSize() const
+size_t OptionalString::getSize() const
 {
     return _size;
 }
 
-void MyString::clear()
+void OptionalString::clear()
 {
     _size = 0;
 }
 
-void MyString::saveToBinaryFile(std::ofstream& ofs) const
+void OptionalString::saveToBinaryFile(std::ofstream& ofs) const
 {
     ofs.write(reinterpret_cast<const char*>(&_size), sizeof(size_t));
+
+    if(_size!=0)
     ofs.write(reinterpret_cast<const char*>(_data), _size * sizeof(char));
 }
 
-void MyString::loadFromBinaryFile(std::ifstream& ifs)
+void OptionalString::loadFromBinaryFile(std::ifstream& ifs)
 {
     free();
 
     ifs.read(reinterpret_cast<char*>(&_size), sizeof(size_t));
 
-    _data = new char[_size + 1];
-    _data[_size] = '\0';
-    _allocatedDataSize = _size;
+    if (_size != 0)
+    {
+        _data = new char[_size + 1];
+        _data[_size] = '\0';
+        _allocatedDataSize = _size;
 
-    ifs.read(_data, _size * sizeof(char));
+        ifs.read(_data, _size * sizeof(char));
+    }
 }
 
-const char* MyString::c_str() const
+const char* OptionalString::c_str() const
 {
     return _data;
 }
 
-MyString& MyString::operator+=(const MyString& other)
+OptionalString& OptionalString::operator+=(const OptionalString& other)
 {
     if (getSize() + other.getSize() + 1 > _allocatedDataSize)
         resize(dataToAllocByStringLen(getSize() + other.getSize()));
@@ -140,7 +148,7 @@ MyString& MyString::operator+=(const MyString& other)
     return *this;
 }
 
-MyString& MyString::operator+=(char ch)
+OptionalString& OptionalString::operator+=(char ch)
 {
     if (_size == _allocatedDataSize)
         resize(2 * _allocatedDataSize);
@@ -150,22 +158,22 @@ MyString& MyString::operator+=(char ch)
     return *this;
 }
 
-char& MyString::operator[](size_t index)
+char& OptionalString::operator[](size_t index)
 {
     return _data[index]; // no security check!!
 }
 
-const char& MyString::operator[](size_t index) const
+const char& OptionalString::operator[](size_t index) const
 {
     return _data[index]; // no security check!!
 }
 
-std::ostream& operator<<(std::ostream& os, const MyString& obj)
+std::ostream& operator<<(std::ostream& os, const OptionalString& obj)
 {
     return os << obj._data;
 }
 
-std::istream& operator>>(std::istream& is, MyString& ref)
+std::istream& operator>>(std::istream& is, OptionalString& ref)
 {
     char buff[1024];
     is >> buff;
@@ -179,7 +187,7 @@ std::istream& operator>>(std::istream& is, MyString& ref)
     return is;
 }
 
-void MyString::resize(unsigned newAllocatedDataSize)
+void OptionalString::resize(unsigned newAllocatedDataSize)
 {
     char* newData = new char[newAllocatedDataSize + 1];
     std::strcpy(newData, _data);
@@ -188,12 +196,12 @@ void MyString::resize(unsigned newAllocatedDataSize)
     _allocatedDataSize = newAllocatedDataSize;
 }
 
-void MyString::free()
+void OptionalString::free()
 {
     delete[] _data;
 }
 
-void MyString::copyFrom(const MyString& other)
+void OptionalString::copyFrom(const OptionalString& other)
 {
     _allocatedDataSize = other._allocatedDataSize;
     _data = new char[_allocatedDataSize];
@@ -201,40 +209,40 @@ void MyString::copyFrom(const MyString& other)
     _size = other._size;
 }
 
-MyString operator+(const MyString& lhs, const MyString& rhs)
+OptionalString operator+(const OptionalString& lhs, const OptionalString& rhs)
 {
-    MyString result(lhs.getSize() + rhs.getSize());
+    OptionalString result(lhs.getSize() + rhs.getSize());
     result += lhs; // no resize is needed
     result += rhs;
     return result;
 }
 
-bool operator==(const MyString& lhs, const MyString& rhs)
+bool operator==(const OptionalString& lhs, const OptionalString& rhs)
 {
     return std::strcmp(lhs.c_str(), rhs.c_str()) == 0;
 }
 
-bool operator!=(const MyString& lhs, const MyString& rhs)
+bool operator!=(const OptionalString& lhs, const OptionalString& rhs)
 {
     return std::strcmp(lhs.c_str(), rhs.c_str()) != 0;
 }
 
-bool operator<(const MyString& lhs, const MyString& rhs)
+bool operator<(const OptionalString& lhs, const OptionalString& rhs)
 {
     return std::strcmp(lhs.c_str(), rhs.c_str()) < 0;
 }
 
-bool operator<=(const MyString& lhs, const MyString& rhs)
+bool operator<=(const OptionalString& lhs, const OptionalString& rhs)
 {
     return std::strcmp(lhs.c_str(), rhs.c_str()) <= 0;
 }
 
-bool operator>(const MyString& lhs, const MyString& rhs)
+bool operator>(const OptionalString& lhs, const OptionalString& rhs)
 {
     return std::strcmp(lhs.c_str(), rhs.c_str()) > 0;
 }
 
-bool operator>=(const MyString& lhs, const MyString& rhs)
+bool operator>=(const OptionalString& lhs, const OptionalString& rhs)
 {
     return std::strcmp(lhs.c_str(), rhs.c_str()) >= 0;
 }

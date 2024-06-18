@@ -19,6 +19,9 @@ public:
     size_t getSize() const;
     void clear();
 
+    void saveToBinaryFile(std::ofstream& ofs) const;
+    void loadFromBinaryFile(std::ifstream& ifs);
+
     const char* c_str() const;
 
     MyString& operator+=(const MyString& other);

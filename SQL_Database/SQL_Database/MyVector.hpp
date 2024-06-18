@@ -12,6 +12,8 @@ public:
 	MyVector<T>& operator=(MyVector<T>&&) noexcept;
 	~MyVector();
 
+	void setValue(const T& toAdd, unsigned index);
+	void setValue(T&& toAdd, unsigned index);
 	void pushBack(const T& toAdd);
 	void pushBack(T&&);
 	void popBack();
@@ -24,6 +26,9 @@ public:
 	T& operator[](size_t);
 	size_t getSize() const;
 	friend std::ostream& operator<<(std::ostream&, const MyVector<T>&);
+
+	void saveToBinaryFile(std::ofstream& ofs) const;
+	void loadFromBinaryFile(std::ifstream& ifs);
 
 private:
 	T* data = nullptr;
@@ -240,6 +245,30 @@ size_t MyVector<T>::getSize() const
 	return size;
 }
 
+template<typename T>
+void MyVector<T>::saveToBinaryFile(std::ofstream& ofs) const
+{
+	ofs.write(reinterpret_cast<const char*>(&size), sizeof(size_t));
+
+	if(size!=0)
+	ofs.write(reinterpret_cast<const char*>(data), size * sizeof(T));
+}
+
+template<typename T>
+void MyVector<T>::loadFromBinaryFile(std::ifstream& ifs)
+{
+	free();
+
+	ifs.read(reinterpret_cast<char*>(&size), sizeof(size_t));
+
+	if (size != 0)
+	{
+		data = new T[size];
+		ifs.read(data, size * sizeof(T));
+		capacity = size;
+	}
+}
+
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const MyVector<T>&)
 {
@@ -250,3 +279,50 @@ std::ostream& operator<<(std::ostream& out, const MyVector<T>&)
 	return out;
 }
 
+template <typename T>
+void MyVector<T>::setValue(const T& toAdd, unsigned index)
+{
+	if(index >= size)
+		throw std::invalid_argument("Out of bounds!");
+
+	data[index] = toAdd;
+}
+
+template <typename T>
+void MyVector<T>::setValue(T&& toAdd, unsigned index)
+{
+	if (index >= size)
+		throw std::invalid_argument("Out of bounds!");
+
+	data[index] = std::move(toAdd);
+}
+
+//Template specialization
+template<>
+inline void MyVector<OptionalString>::saveToBinaryFile(std::ofstream& ofs) const
+{
+	ofs.write(reinterpret_cast<const char*>(&size), sizeof(size_t));
+
+	for (int i = 0; i < size; i++)
+	{
+		data[i].saveToBinaryFile(ofs);
+	}
+}
+
+template<>
+inline void MyVector<OptionalString>::loadFromBinaryFile(std::ifstream& ifs)
+{
+	free();
+
+	ifs.read(reinterpret_cast<char*>(&size), sizeof(size_t));
+
+	if (size != 0)
+	data = new OptionalString[size];
+
+	for (int i = 0; i < size; i++)
+	{
+		data[i].loadFromBinaryFile(ifs);
+	}
+
+	capacity = size;
+}
