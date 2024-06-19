@@ -137,7 +137,7 @@ void Table::setValue(OptionalString&& value, unsigned rowIndex, unsigned colInde
 	/*if (rowIndex >= rowsCount || colIndex >= size)
 		throw std::invalid_argument("Out of range!");*/
 
-	if (rowIndex > this->rowsCount)
+	if (rowIndex >= this->rowsCount)
 		rowsCount = rowIndex + 1;
 
 	columns[colIndex]->setValue(std::move(value), rowIndex);

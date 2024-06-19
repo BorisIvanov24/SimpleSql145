@@ -150,11 +150,16 @@ OptionalString& OptionalString::operator+=(const OptionalString& other)
 
 OptionalString& OptionalString::operator+=(char ch)
 {
-    if (_size == _allocatedDataSize)
+    if (_size == _allocatedDataSize || _size + 1 == _allocatedDataSize)
+    {
+        if(_allocatedDataSize != 0)
         resize(2 * _allocatedDataSize);
+        else
+        resize(8);
 
+    }
     _data[_size++] = ch;
-
+    _data[_size] = '\0';
     return *this;
 }
 
@@ -190,7 +195,10 @@ std::istream& operator>>(std::istream& is, OptionalString& ref)
 void OptionalString::resize(unsigned newAllocatedDataSize)
 {
     char* newData = new char[newAllocatedDataSize + 1];
+    
+    if (_data != nullptr)
     std::strcpy(newData, _data);
+    
     delete[] _data;
     _data = newData;
     _allocatedDataSize = newAllocatedDataSize;

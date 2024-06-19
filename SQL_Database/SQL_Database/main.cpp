@@ -27,37 +27,17 @@ int main()
 
 	db.addTable(table);
 
-	MyString tableName("table1");
-	MyVector<MyString> cols;
-	cols.pushBack("col1");
-	cols.pushBack("col2");
-	cols.pushBack("col3");
-
-	MyVector<OptionalString> vec1;
-	vec1.pushBack("1");
-	vec1.pushBack("Ivanovic");
-	vec1.pushBack("345.23");
-
-	MyVector<OptionalString> vec2;
-	vec2.pushBack("33");
-	vec2.pushBack("Gorna");
-	vec2.pushBack("1.999");
-
-	MyVector<MyVector<OptionalString>> values;
-	values.pushBack(vec1);
-	values.pushBack(vec2);
-
-	InsertIntoSQLQuery insertQuery(db, std::move(tableName), std::move(cols), std::move(values));
-
-	std::cout<<insertQuery.execute().getMessage()<<std::endl;
-
 	SimpleTablePrinter::getInstance().print(db.getTable(0));
 
-	SQLQueryFactory::makeQuery("create table Tablica1 (kola int, kushta text, cena real)", db)->execute();
+	SQLQueryFactory::makeQuery("insert into table1 (col1, col2) values (6, 7), (12.2, 54), (bobi, bobsan), (dqdo, baba)", db)->execute();
+	
+	std::cout << std::endl;
+	SimpleTablePrinter::getInstance().print(db.getTable(0));
+	//SQLQueryFactory::makeQuery("create table Tablica1 (kola int, kushta text, cena real)", db)->execute();
 
-	std::cout<<SQLQueryFactory::makeQuery("show tables", db)->execute().getMessage()<<std::endl;
+	//std::cout<<SQLQueryFactory::makeQuery("show tables", db)->execute().getMessage()<<std::endl;
 
-	SimpleTablePrinter::getInstance().print(db.getTable(1));
+	//SimpleTablePrinter::getInstance().print(db.getTable(0));
 
 
 

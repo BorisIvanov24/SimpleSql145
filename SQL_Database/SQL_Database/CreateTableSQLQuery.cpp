@@ -20,3 +20,11 @@ SQLResponse CreateTableSQLQuery::execute()
 
 	return SQLResponse("Query OK");
 }
+
+CreateTableSQLQuery::~CreateTableSQLQuery()
+{
+	for (int i = 0; i < columns.getSize(); i++)
+	{
+		delete columns[i];
+	}
+}

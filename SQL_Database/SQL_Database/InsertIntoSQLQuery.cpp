@@ -37,11 +37,15 @@ SQLResponse InsertIntoSQLQuery::execute()
 			if (table.getColumnName(i) == cols[j])
 			{
 				size_t rowsCount = rowsCountStart;
+				
 				for (int k = 0; k < values.getSize(); k++)
 				{
+					//std::cout << values[k][index] <<" "<<rowsCount <<" "<<i << std::endl;
 					database.setValue(tableIndex, std::move(values[k][index]), rowsCount, i);
-					rowsCount++;
+				    rowsCount++;
 				}
+				//std::cout << "----" << std::endl;
+
 				index++;
 			}
 		}

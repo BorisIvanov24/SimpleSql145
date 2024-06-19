@@ -8,6 +8,7 @@ public:
 	SQLQuery(Database& database);
 	virtual SQLResponse execute() = 0;
 
+	virtual ~SQLQuery() = default;
 protected:
 	Database& database;
 };
