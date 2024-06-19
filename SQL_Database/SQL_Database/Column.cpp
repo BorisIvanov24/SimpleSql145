@@ -51,6 +51,16 @@ void Column::loadFromBinaryFile(std::ifstream& ifs)
 	values.loadFromBinaryFile(ifs);
 }
 
+const MyString& Column::getName() const
+{
+	return name;
+}
+
+void Column::addValue(const OptionalString& value)
+{
+	values.pushBack(value);
+}
+
 const OptionalString& Column::getValue(unsigned index)
 {
 	if (index > getSize())

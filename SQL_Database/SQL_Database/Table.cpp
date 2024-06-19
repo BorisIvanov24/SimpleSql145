@@ -87,6 +87,11 @@ void Table::removeColumn(unsigned index)
 	columns = temp;
 }
 
+const MyString& Table::getColumnName(unsigned index) const
+{
+	return (columns[index]->getName());
+}
+
 void Table::saveToBinaryFile(std::ofstream& ofs) const
 {
 	name.saveToBinaryFile(ofs);
@@ -127,7 +132,7 @@ const OptionalString& Table::getValue(unsigned rowIndex, unsigned colIndex) cons
 	return columns[colIndex]->getValue(rowIndex);
 }
 
-void Table::setValue(const OptionalString& value, unsigned rowIndex, unsigned colIndex)
+void Table::setValue(OptionalString&& value, unsigned rowIndex, unsigned colIndex)
 {
 	/*if (rowIndex >= rowsCount || colIndex >= size)
 		throw std::invalid_argument("Out of range!");*/
@@ -135,9 +140,15 @@ void Table::setValue(const OptionalString& value, unsigned rowIndex, unsigned co
 	if (rowIndex > this->rowsCount)
 		rowsCount = rowIndex + 1;
 
-	columns[colIndex]->setValue(value, rowIndex);
+	columns[colIndex]->setValue(std::move(value), rowIndex);
 
 	fillEmpty();
+}
+
+void Table::addValue(const OptionalString& value, unsigned columnIndex)
+{
+	columns[columnIndex]->addValue(value);
+	rowsCount++;
 }
 
 size_t Table::getRowsCount() const

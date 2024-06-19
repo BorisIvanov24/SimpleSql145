@@ -109,6 +109,16 @@ const Table& Database::getTable(unsigned index) const
 	return *(tables[index]);
 }
 
+void Database::setValue(unsigned tableIndex, OptionalString&& value, unsigned rowIndex, unsigned colIndex)
+{
+	tables[tableIndex]->setValue(std::move(value), rowIndex, colIndex);
+}
+
+void Database::addValue(unsigned tableIndex, unsigned columnIndex, const OptionalString& value)
+{
+	tables[tableIndex]->addValue(value, columnIndex);
+}
+
 void Database::copyFrom(const Database& other)
 {
 	tables = new Table * [other.capacity] {nullptr};

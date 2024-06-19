@@ -19,11 +19,13 @@ public:
 	void addColumn(Column* ptr);
 	void removeColumn(unsigned index);
 
+	const MyString& getColumnName(unsigned index) const;
 	void saveToBinaryFile(std::ofstream& ofs) const;
 	void loadFromBinaryFile(std::ifstream& ifs);
 
 	const OptionalString& getValue(unsigned rowIndex, unsigned colIndex) const;
-	void setValue(const OptionalString& value, unsigned rowIndex, unsigned colIndex);
+	void setValue(OptionalString&& value, unsigned rowIndex, unsigned colIndex);
+	void addValue(const OptionalString& value, unsigned columnIndex);
 
 	size_t getRowsCount() const;
 	size_t getColsCount() const;

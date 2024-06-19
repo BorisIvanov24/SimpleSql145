@@ -130,12 +130,14 @@
     <ClCompile Include="Column.cpp" />
     <ClCompile Include="CreateTableSQLQuery.cpp" />
     <ClCompile Include="Database.cpp" />
+    <ClCompile Include="InsertIntoSQLQuery.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyString.cpp" />
     <ClCompile Include="OptionalString.cpp" />
     <ClCompile Include="ShowTablesSQLQuery.cpp" />
     <ClCompile Include="SimpleTablePrinter.cpp" />
     <ClCompile Include="SQLQuery.cpp" />
+    <ClCompile Include="SQLQueryFactory.cpp" />
     <ClCompile Include="SQLResponse.cpp" />
     <ClCompile Include="Table.cpp" />
     <ClCompile Include="TablePrinter.cpp" />
@@ -144,6 +146,7 @@
     <ClInclude Include="Column.h" />
     <ClInclude Include="CreateTableSQLQuery.h" />
     <ClInclude Include="Database.h" />
+    <ClInclude Include="InsertIntoSQLQuery.h" />
     <ClInclude Include="MyString.h" />
     <ClInclude Include="MyVector.hpp" />
     <ClInclude Include="Optional.hpp" />
@@ -151,6 +154,7 @@
     <ClInclude Include="ShowTablesSQLQuery.h" />
     <ClInclude Include="SimpleTablePrinter.h" />
     <ClInclude Include="SQLQuery.h" />
+    <ClInclude Include="SQLQueryFactory.h" />
     <ClInclude Include="SQLResponse.h" />
     <ClInclude Include="Table.h" />
     <ClInclude Include="TablePrinter.h" />

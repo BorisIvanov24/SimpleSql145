@@ -127,6 +127,17 @@ const char* MyString::c_str() const
     return _data;
 }
 
+MyString MyString::substr(unsigned startIndex, unsigned len) const
+{
+    MyString str;
+    for (int i = startIndex; i < startIndex + len; i++)
+    {
+        str += _data[i];
+    }
+    str += '\0';
+    return str;
+}
+
 MyString& MyString::operator+=(const MyString& other)
 {
     if (getSize() + other.getSize() + 1 > _allocatedDataSize)
@@ -142,11 +153,11 @@ MyString& MyString::operator+=(const MyString& other)
 
 MyString& MyString::operator+=(char ch)
 {
-    if (_size == _allocatedDataSize)
+    if (_size == _allocatedDataSize || _size + 1 == _allocatedDataSize)
         resize(2 * _allocatedDataSize);
 
     _data[_size++] = ch;
-
+    _data[_size] = '\0';
     return *this;
 }
 

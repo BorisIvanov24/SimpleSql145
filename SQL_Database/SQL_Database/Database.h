@@ -21,6 +21,8 @@ public:
 	const MyString& getName() const;
 	size_t getSize() const;
 	const Table& getTable(unsigned index) const;
+	void setValue(unsigned tableIndex, OptionalString&& value, unsigned rowIndex, unsigned colIndex);
+	void addValue(unsigned tableIndex, unsigned columnIndex, const OptionalString& value);
 
 	SQLResponse executeQuery(const MyString& query);
 

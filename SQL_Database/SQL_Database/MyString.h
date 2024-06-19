@@ -23,6 +23,7 @@ public:
     void loadFromBinaryFile(std::ifstream& ifs);
 
     const char* c_str() const;
+    MyString substr(unsigned startIndex, unsigned len) const;
 
     MyString& operator+=(const MyString& other);
     MyString& operator+=(char ch);

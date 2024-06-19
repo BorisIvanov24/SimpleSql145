@@ -24,6 +24,8 @@ public:
 	void addNullValue();
 	void saveToBinaryFile(std::ofstream& ofs) const;
 	void loadFromBinaryFile(std::ifstream& ifs);
+	const MyString& getName() const;
+	void addValue(const OptionalString& value);
 
 	const OptionalString& getValue(unsigned index);
 	ColumnType getColumnType() const;
