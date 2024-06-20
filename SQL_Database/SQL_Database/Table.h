@@ -16,6 +16,7 @@ public:
 
 	const MyString& getName() const;
 	size_t getColumnsCount() const;
+	ColumnType getColumnType(unsigned index) const;
 	void addColumn(Column* ptr);
 	void removeColumn(unsigned index);
 

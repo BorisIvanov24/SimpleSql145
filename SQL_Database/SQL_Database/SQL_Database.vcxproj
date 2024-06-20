@@ -128,9 +128,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Column.cpp" />
+    <ClCompile Include="ConjunctionExpression.cpp" />
     <ClCompile Include="CreateTableSQLQuery.cpp" />
     <ClCompile Include="Database.cpp" />
+    <ClCompile Include="DisjunctionExpression.cpp" />
+    <ClCompile Include="EqualExpression.cpp" />
+    <ClCompile Include="Expression.cpp" />
+    <ClCompile Include="ExpressionFactory.cpp" />
+    <ClCompile Include="GreaterThanExpression.cpp" />
     <ClCompile Include="InsertIntoSQLQuery.cpp" />
+    <ClCompile Include="LowerThanExpression.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyString.cpp" />
     <ClCompile Include="OptionalString.cpp" />
@@ -144,9 +151,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Column.h" />
+    <ClInclude Include="ConjunctionExpression.h" />
     <ClInclude Include="CreateTableSQLQuery.h" />
     <ClInclude Include="Database.h" />
+    <ClInclude Include="DisjunctionExpression.h" />
+    <ClInclude Include="EqualExpression.h" />
+    <ClInclude Include="Expression.h" />
+    <ClInclude Include="ExpressionFactory.h" />
+    <ClInclude Include="GreaterThanExpression.h" />
     <ClInclude Include="InsertIntoSQLQuery.h" />
+    <ClInclude Include="LowerThanExpression.h" />
     <ClInclude Include="MyString.h" />
     <ClInclude Include="MyVector.hpp" />
     <ClInclude Include="Optional.hpp" />

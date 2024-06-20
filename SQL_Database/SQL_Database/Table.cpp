@@ -57,6 +57,11 @@ size_t Table::getColumnsCount() const
 	return size;
 }
 
+ColumnType Table::getColumnType(unsigned index) const
+{
+	return columns[index]->getColumnType();
+}
+
 void Table::addColumn(Column* ptr)
 {
 	resize();
