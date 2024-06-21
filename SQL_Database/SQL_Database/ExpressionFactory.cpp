@@ -25,30 +25,34 @@ Expression* ExpressionFactory::makeExpression(const MyString& str)
 
 	index++;
 
+	//((col2) = (Boris)) and ((col3) = (3.14))
+	//(col2) > (34.4)
 	switch (str[index])
 	{
 		case '>':
 		{
-			return new GreaterThanExpression(str.substr(1, index - 3), str.substr(index + 3, str.getSize() - index - 5));
+			return new GreaterThanExpression(str.substr(1, index - 3), str.substr(index + 3, str.getSize() - index - 4));
 		}
 		case '<':
 		{
-			std::cout << str.substr(1, index - 3) << " " << str.substr(index + 3, str.getSize() - index - 5) << std::endl;
-			return new LowerThanExpression(str.substr(1, index - 3), str.substr(index + 3, str.getSize() - index - 5));
+			//std::cout << str.substr(1, index - 3) << " " << str.substr(index + 3, str.getSize() - index - 4) << std::endl;
+			return new LowerThanExpression(str.substr(1, index - 3), str.substr(index + 3, str.getSize() - index - 4));
 		}
 		case '=':
 		{
-			std::cout << str.substr(1, index - 3) << " " << str.substr(index + 3, str.getSize() - index - 5) << std::endl;
-			return new EqualExpression(str.substr(1, index - 3), str.substr(index + 3, str.getSize() - index - 5));
+			//std::cout << str.substr(1, index - 3) << " " << str.substr(index + 3, str.getSize() - index - 4) << std::endl;
+			return new EqualExpression(str.substr(1, index - 3), str.substr(index + 3, str.getSize() - index - 4));
 		}
 		case 'a':
 		{
-			std::cout << str.substr(1, index - 3) << " " << str.substr(index + 5, str.getSize() - index - 6) << std::endl;
+			//std::cout <<str.substr(1, index - 3) << " " << str.substr(index + 5, str.getSize() - index - 6) <<std::endl;
 			return new ConjunctionExpression(makeExpression(str.substr(1, index - 3)),
 										     makeExpression(str.substr(index + 5, str.getSize() - index - 6)));
 		}
 		case 'o':
 		{
+			//std::cout << str.substr(1, index - 3) << " " << str.substr(index + 4, str.getSize() - index - 5) << std::endl;
+
 			return new DisjunctionExpression(makeExpression(str.substr(1, index - 3)),
 				                             makeExpression(str.substr(index + 4, str.getSize() - index - 5)));
 		}

@@ -1,10 +1,9 @@
 #include "LowerThanExpression.h"
 #include <cstdlib>
 
-LowerThanExpression::LowerThanExpression(MyString&& left, MyString&& right)
+LowerThanExpression::LowerThanExpression(MyString&& left, MyString&& right) : 
+										BinaryOperatorExpression(std::move(left), std::move(right))
 {
-	this->left = std::move(left);
-	this->right = std::move(right);
 }
 
 bool LowerThanExpression::evaluate(const Table& table, unsigned rowIndex) const

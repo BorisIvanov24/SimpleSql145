@@ -19,6 +19,7 @@
 #include "ConjunctionExpression.h"
 #include "DisjunctionExpression.h"
 #include "ExpressionFactory.h"
+#include "SelectSQLQuery.h"
 
 //#ifdef _DEBUG
 //#define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
@@ -26,7 +27,11 @@
 
 /*
 Expression-a zaduljitelno skobuvan po sledniq nachin:
-     ((col2) = (Boris)) or ((col3) < (3.125))
+    Where ((col2) = (Boris)) or ((col3) < (3.125))
+
+ne se poddurjat izrazi ot sledniq vid:
+	Where (col2) > (col3)
+
 */
 
 int main()
@@ -57,27 +62,47 @@ int main()
 
 	//_CrtDumpMemoryLeaks();
 
-
-	/*Table* table = new Table("table1");
+	
+	Table* table = new Table("table1");
 
 	table->addColumn(new Column("col1", ColumnType::INTEGER));
 	table->addColumn(new Column("col2", ColumnType::TEXT));
 	table->addColumn(new Column("col3", ColumnType::REAL));
 
-	table->setValue("12", 3, 0);
+	table->setValue("12", 0, 0);
 	table->setValue("Boris", 0, 1);
 	table->setValue("3.14", 0, 2);
+	table->setValue("3.14", 3, 2);
 
-	EqualExpression* exp1 = new EqualExpression("col2", "Boris");
-	LowerThanExpression* exp2 = new LowerThanExpression("col3", "3.125");
+	Database db("DatabaseTest");
+	db.addTable(table);
 
-	Expression* exp = ExpressionFactory::makeExpression("((col2) = (Boris)) or ((col3) < (3.125))");
+	SimpleTablePrinter::getInstance().print(*table);
+
+	//Expression* exp = ExpressionFactory::makeExpression("(col3) = (3.14)");
+
+	//Expression* exp = ExpressionFactory::makeExpression("((col2) = (Boris)) and ((col3) = (3.14))");
+
+	//Expression* exp = ExpressionFactory::makeExpression("(((col1) = (12)) and ((col2) = (Boris))) or ((col3) = (3.14))");
+
+	SQLQuery* query = SQLQueryFactory::makeQuery("select col1 from table1 where (col3) = (NULL)", db);
+
+	std::cout << query->execute().getMessage() << std::endl;
 
 
-	for (int i = 0; i < 4; i++)
+	/*for (int i = 0; i < 4; i++)
 	{
 		std::cout << exp->evaluate(*table, i) << std::endl;
 	}*/
 	
-	
+	/*
+								+------+-------+------+
+								| col1 |  col2 | col3 |
+								+------+-------+------+
+								|   12 | Boris | 3.14 |
+								| NULL |  NULL | NULL |
+								| NULL |  NULL | NULL |
+								| NULL |  NULL | 3.14 |
+								+------+-------+------+
+	*/
 }

@@ -117,7 +117,7 @@ void MyString::loadFromBinaryFile(std::ifstream& ifs)
 
     _data = new char[_size + 1];
     _data[_size] = '\0';
-    _allocatedDataSize = _size;
+    _allocatedDataSize = _size + 1;
 
     ifs.read(_data, _size * sizeof(char));
 }
@@ -135,6 +135,7 @@ MyString MyString::substr(unsigned startIndex, unsigned len) const
         str += _data[i];
     }
     str += '\0';
+    str._size--;
     return str;
 }
 

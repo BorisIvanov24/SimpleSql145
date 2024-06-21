@@ -127,6 +127,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BinaryLogicalExpression.cpp" />
+    <ClCompile Include="BinaryOperatorExpression.cpp" />
     <ClCompile Include="Column.cpp" />
     <ClCompile Include="ConjunctionExpression.cpp" />
     <ClCompile Include="CreateTableSQLQuery.cpp" />
@@ -141,6 +143,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyString.cpp" />
     <ClCompile Include="OptionalString.cpp" />
+    <ClCompile Include="SelectSQLQuery.cpp" />
     <ClCompile Include="ShowTablesSQLQuery.cpp" />
     <ClCompile Include="SimpleTablePrinter.cpp" />
     <ClCompile Include="SQLQuery.cpp" />
@@ -150,6 +153,8 @@
     <ClCompile Include="TablePrinter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BinaryLogicalExpression.h" />
+    <ClInclude Include="BinaryOperatorExpression.h" />
     <ClInclude Include="Column.h" />
     <ClInclude Include="ConjunctionExpression.h" />
     <ClInclude Include="CreateTableSQLQuery.h" />
@@ -165,6 +170,7 @@
     <ClInclude Include="MyVector.hpp" />
     <ClInclude Include="Optional.hpp" />
     <ClInclude Include="OptionalString.h" />
+    <ClInclude Include="SelectSQLQuery.h" />
     <ClInclude Include="ShowTablesSQLQuery.h" />
     <ClInclude Include="SimpleTablePrinter.h" />
     <ClInclude Include="SQLQuery.h" />

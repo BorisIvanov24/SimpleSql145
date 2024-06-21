@@ -212,9 +212,18 @@ void OptionalString::free()
 void OptionalString::copyFrom(const OptionalString& other)
 {
     _allocatedDataSize = other._allocatedDataSize;
-    _data = new char[_allocatedDataSize];
-    std::strcpy(_data, other._data);
-    _size = other._size;
+    
+    if (other._data == nullptr)
+    {
+        _data = nullptr;
+        _size = 0;
+    }
+    else
+    {
+        _data = new char[_allocatedDataSize];
+        std::strcpy(_data, other._data);
+        _size = other._size;
+    }
 }
 
 OptionalString operator+(const OptionalString& lhs, const OptionalString& rhs)

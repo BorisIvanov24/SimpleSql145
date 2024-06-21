@@ -1,15 +1,11 @@
 #pragma once
-#include "Expression.h"
+#include "BinaryLogicalExpression.h"
 
-class ConjunctionExpression : public Expression
+class ConjunctionExpression : public BinaryLogicalExpression
 {
 public:
 	ConjunctionExpression(Expression* left, Expression* right);
 	bool evaluate(const Table& table, unsigned rowIndex) const override;
-	~ConjunctionExpression();
 
-private:
-	Expression* left;
-	Expression* right;
 };
 

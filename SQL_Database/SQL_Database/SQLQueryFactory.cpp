@@ -2,13 +2,16 @@
 #include "ShowTablesSQLQuery.h"
 #include "CreateTableSQLQuery.h"
 #include "InsertIntoSQLQuery.h"
+#include "SelectSQLQuery.h"
+#include "ExpressionFactory.h"
 
 enum class QueryType
 {
     NONE,
     SHOW_TABLES,
     CREATE_TABLE,
-    INSERT_INTO
+    INSERT_INTO,
+    SELECT
 };
 
 const char* showTablesQuery = "show tables";
@@ -19,6 +22,9 @@ const size_t createTableQuerySize = 12;
 
 const char* insertIntoQuery = "insert into";
 const size_t insertIntoQuerySize = 11;
+
+const char* selectQuery = "select";
+const size_t selectQuerySize = 6;
 
 static unsigned countCharOccurs(const MyString& str, char ch)
 {
@@ -45,6 +51,10 @@ static QueryType identifyQuery(const MyString& str)
     else if (str.substr(0, insertIntoQuerySize) == insertIntoQuery)
     {
         return QueryType::INSERT_INTO;
+    }
+    else if (str.substr(0, selectQuerySize) == selectQuery)
+    {
+        return QueryType::SELECT;
     }
     else
         return QueryType::NONE;
@@ -157,6 +167,61 @@ static SQLQuery* makeInsertIntoQuery(const MyString& str, Database& db)
     return new InsertIntoSQLQuery(db, std::move(tableName), std::move(cols), std::move(values));
 }
 
+static SQLQuery* makeSelectQuery(const MyString& str, Database& db)
+{
+    MyVector<MyString> cols;
+    MyVector<MyString> tables;
+    Expression* exp = nullptr;
+
+    //select field1 from test_table where field1=2;
+    //field1, field2 from test_table where ((col2) = (Boris)) or ((col3) < (3.125));
+
+    unsigned index = 0;
+
+    if (str[index] != '*')
+    {
+        while (str[index] != ' ')
+        {
+            MyString tempStr;
+
+            while (str[index] != ',' && str[index] != ' ')
+            {
+                tempStr += str[index];
+                index++;
+            }
+
+            //std::cout << tempStr << std::endl;
+            cols.pushBack(std::move(tempStr));
+            if(str[index] == ',')
+            index+=2;
+        }
+    }
+
+
+    if (str[index] == '*')
+        index++;
+
+    index += 6;
+
+    MyString tempStr;
+    while (str[index] != ' ' && index<str.getSize())
+    {
+        tempStr += str[index];
+        index++;
+    }
+
+    //std::cout << tempStr << ' ' << str[index] << std::endl;
+    tables.pushBack(std::move(tempStr));
+
+    //std::cout << str.substr(index + 7, str.getSize() - index) << std::endl;
+    if (index != str.getSize())
+    {
+        exp = ExpressionFactory::makeExpression(str.substr(index + 7, str.getSize() - index));
+    }
+
+    return new SelectSQLQuery(db, std::move(cols), std::move(tables), exp);
+}
+
 SQLQuery* SQLQueryFactory::makeQuery(const MyString& str, Database& db)
 {
     QueryType type = identifyQuery(str);
@@ -176,6 +241,10 @@ SQLQuery* SQLQueryFactory::makeQuery(const MyString& str, Database& db)
         {
             return makeInsertIntoQuery(str.substr(insertIntoQuerySize + 1,
                                        str.getSize() - insertIntoQuerySize + 1), db);
+        }
+        case QueryType::SELECT:
+        {
+            return makeSelectQuery(str.substr(selectQuerySize + 1, str.getSize() - selectQuerySize + 1), db);
         }
     }
 }

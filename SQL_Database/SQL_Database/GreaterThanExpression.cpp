@@ -1,10 +1,9 @@
 #include "GreaterThanExpression.h"
 #include <cstdlib>
 
-GreaterThanExpression::GreaterThanExpression(MyString&& left, MyString&& right)
+GreaterThanExpression::GreaterThanExpression(MyString&& left, MyString&& right) :
+											 BinaryOperatorExpression(std::move(left), std::move(right))
 {
-	this->left = std::move(left);
-	this->right = std::move(right);
 }
 
 bool GreaterThanExpression::evaluate(const Table& table, unsigned rowIndex) const

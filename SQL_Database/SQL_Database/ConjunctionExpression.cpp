@@ -1,6 +1,7 @@
 #include "ConjunctionExpression.h"
 
-ConjunctionExpression::ConjunctionExpression(Expression* left, Expression* right) : left(left), right(right)
+ConjunctionExpression::ConjunctionExpression(Expression* left, Expression* right) : 
+											 BinaryLogicalExpression(left, right)
 {
 }
 
@@ -9,8 +10,3 @@ bool ConjunctionExpression::evaluate(const Table& table, unsigned rowIndex) cons
 	return (left->evaluate(table, rowIndex) && right->evaluate(table, rowIndex));
 }
 
-ConjunctionExpression::~ConjunctionExpression()
-{
-	delete left;
-	delete right;
-}

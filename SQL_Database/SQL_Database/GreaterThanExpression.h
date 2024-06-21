@@ -1,14 +1,10 @@
 #pragma once
-#include "Expression.h"
+#include "BinaryOperatorExpression.h"
 
-class GreaterThanExpression : public Expression
+class GreaterThanExpression : public BinaryOperatorExpression
 {
 public:
 	GreaterThanExpression(MyString&& left, MyString&& right);
 	bool evaluate(const Table& table, unsigned rowIndex) const override;
-
-private:
-	MyString left; //this is a name of a column
-	MyString right;
 };
 
