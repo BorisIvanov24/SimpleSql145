@@ -20,6 +20,8 @@
 #include "DisjunctionExpression.h"
 #include "ExpressionFactory.h"
 #include "SelectSQLQuery.h"
+#include "AddColumnSQLQuery.h"
+#include "DropColumnSQLQuery.h"
 
 //#ifdef _DEBUG
 //#define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
@@ -74,6 +76,7 @@ int main()
 	table->setValue("3.14", 0, 2);
 	table->setValue("3.14", 3, 2);
 
+
 	Database db("DatabaseTest");
 	db.addTable(table);
 
@@ -85,24 +88,22 @@ int main()
 
 	//Expression* exp = ExpressionFactory::makeExpression("(((col1) = (12)) and ((col2) = (Boris))) or ((col3) = (3.14))");
 
-	SQLQuery* query = SQLQueryFactory::makeQuery("select col1 from table1 where (col3) = (NULL)", db);
+	//SQLQuery* query = SQLQueryFactory::makeQuery("select col3 from table1 where (col1) = (NULL)", db);
 
-	std::cout << query->execute().getMessage() << std::endl;
+	/*SQLQuery* query1 = new AddColumnSQLQuery(db, "table1", "col44", ColumnType::REAL);
 
+	std::cout << query1->execute().getMessage() << std::endl;*/
 
-	/*for (int i = 0; i < 4; i++)
-	{
-		std::cout << exp->evaluate(*table, i) << std::endl;
-	}*/
-	
-	/*
-								+------+-------+------+
-								| col1 |  col2 | col3 |
-								+------+-------+------+
-								|   12 | Boris | 3.14 |
-								| NULL |  NULL | NULL |
-								| NULL |  NULL | NULL |
-								| NULL |  NULL | 3.14 |
-								+------+-------+------+
-	*/
+	/*SQLQuery* query3 = SQLQueryFactory::makeQuery("alter table table1 add col123 real", db);
+	std::cout << query3->execute().getMessage() << std::endl;*/
+
+	SQLQuery* query8 = SQLQueryFactory::makeQuery("alter table table1 drop column col2", db);
+
+	std::cout << query8->execute().getMessage() << std::endl;
+
+	//std::cout << db.getTable(0).getColsCount();
+
+	SQLQuery* query2 = SQLQueryFactory::makeQuery("select * from table1", db);
+	std::cout<<query2->execute().getMessage();
+
 }

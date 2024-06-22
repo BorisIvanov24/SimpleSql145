@@ -78,17 +78,21 @@ void Table::removeColumn(unsigned index)
 	if (index >= size)
 		throw std::invalid_argument("Out of range!");
 
-	Column** temp = new Column * [size - 1];
+	Column** temp = new Column* [size - 1];
+	unsigned currentIndex = 0;
 
 	for (int i = 0; i < size; i++)
 	{
 		if (i == index)
 			continue;
 
-		temp[i] = columns[i];
+		temp[currentIndex] = columns[i];
+		currentIndex++;
 	}
 
 	delete[] columns;
+
+	size--;
 	columns = temp;
 }
 
@@ -195,7 +199,9 @@ void Table::moveFrom(Table&& other)
 void Table::free()
 {
 	for (int i = 0; i < size; i++)
+	{
 		delete columns[i];
+	}
 
 	delete[] columns;
 }

@@ -87,6 +87,15 @@
     <ClCompile Include="SelectSQLQuery.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AlterTableSQLQuery.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AddColumnSQLQuery.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DropColumnSQLQuery.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyVector.hpp">
@@ -162,6 +171,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SelectSQLQuery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AlterTableSQLQuery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AddColumnSQLQuery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DropColumnSQLQuery.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,6 +4,8 @@
 #include "InsertIntoSQLQuery.h"
 #include "SelectSQLQuery.h"
 #include "ExpressionFactory.h"
+#include "AddColumnSQLQuery.h"
+#include "DropColumnSQLQuery.h"
 
 enum class QueryType
 {
@@ -11,7 +13,9 @@ enum class QueryType
     SHOW_TABLES,
     CREATE_TABLE,
     INSERT_INTO,
-    SELECT
+    SELECT,
+    ALTER_TABLE,
+    ADD_COLUMN
 };
 
 const char* showTablesQuery = "show tables";
@@ -25,6 +29,16 @@ const size_t insertIntoQuerySize = 11;
 
 const char* selectQuery = "select";
 const size_t selectQuerySize = 6;
+
+const char* alterTableQuery = "alter table";
+const size_t alterTableQuerySize = 11;
+
+const char* addColumnQuery = "add";
+const size_t addColumnQuerySize = 3;
+
+const char* dropColumnQuery = "drop column";
+const size_t dropColumnQuerySize = 11;
+
 
 static unsigned countCharOccurs(const MyString& str, char ch)
 {
@@ -56,6 +70,10 @@ static QueryType identifyQuery(const MyString& str)
     {
         return QueryType::SELECT;
     }
+    else if (str.substr(0, alterTableQuerySize) == alterTableQuery)
+    {
+        return QueryType::ALTER_TABLE;
+    }   
     else
         return QueryType::NONE;
 }
@@ -222,6 +240,92 @@ static SQLQuery* makeSelectQuery(const MyString& str, Database& db)
     return new SelectSQLQuery(db, std::move(cols), std::move(tables), exp);
 }
 
+static SQLQuery* makeDropColumnQuery(const MyString& str, Database& db, MyString&& table)
+{
+    unsigned index = 0;
+    MyString colName;
+
+    while (index != str.getSize())
+    {
+        colName += str[index];
+        index++;
+    }
+
+    return new DropColumnSQLQuery(db, std::move(table), std::move(colName));
+}
+
+static SQLQuery* makeAddColumnQuery(const MyString& str, Database& db, MyString&& table)
+{
+    unsigned index = 0;
+    MyString colName;
+    ColumnType type;
+
+    while (str[index] != ' ')
+    {
+        colName += str[index];
+        index++;
+    }
+
+    index++;
+
+    switch (str[index])
+    {
+        case 'i':
+        {
+            type = ColumnType::INTEGER;
+            break;
+        }
+        case 'r':
+        {
+            type = ColumnType::REAL;
+            break;
+        }
+        case 't':
+        {
+            type = ColumnType::TEXT;
+            break;
+        }
+        default:
+        {
+            type = ColumnType::TEXT;
+            break;
+        }
+
+    }
+
+    return new AddColumnSQLQuery(db, std::move(table), std::move(colName), type);
+}
+
+static SQLQuery* makeAlterTableQuery(const MyString& str, Database& db)
+{
+    MyString table;
+    unsigned index = 0;
+
+    while (str[index] != ' ')
+    {
+        table += str[index];
+        index++;
+    }
+
+    index++;
+
+    if (str.substr(index, addColumnQuerySize) == addColumnQuery)
+    {
+        return makeAddColumnQuery(str.substr(index + addColumnQuerySize + 1, 
+                                             str.getSize() - (index + addColumnQuerySize + 2)),
+                                             db, std::move(table));
+    }
+    else if (str.substr(index, dropColumnQuerySize) == dropColumnQuery)
+    {
+        return makeDropColumnQuery(str.substr(index + dropColumnQuerySize + 1,
+                                   str.getSize() - (index + dropColumnQuerySize + 2)),
+                                   db, std::move(table));
+    }
+    else
+        return nullptr;
+    
+}
+
 SQLQuery* SQLQueryFactory::makeQuery(const MyString& str, Database& db)
 {
     QueryType type = identifyQuery(str);
@@ -245,6 +349,10 @@ SQLQuery* SQLQueryFactory::makeQuery(const MyString& str, Database& db)
         case QueryType::SELECT:
         {
             return makeSelectQuery(str.substr(selectQuerySize + 1, str.getSize() - selectQuerySize + 1), db);
+        }
+        case QueryType::ALTER_TABLE:
+        {
+            return makeAlterTableQuery(str.substr(alterTableQuerySize + 1, str.getSize() - alterTableQuerySize + 1), db);
         }
     }
 }

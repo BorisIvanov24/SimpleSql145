@@ -64,6 +64,8 @@ void Database::saveToBinaryFile(const MyString& fileName) const
 	if (!ofs.is_open())
 		throw std::exception("Unable to open file!");
 
+	name.saveToBinaryFile(ofs);
+
 	ofs.write(reinterpret_cast<const char*>(&size), sizeof(size_t));
 
 	for (int i = 0; i < size; i++)
@@ -80,6 +82,8 @@ void Database::loadFromBinaryFile(const MyString& fileName)
 
 	if (!ifs.is_open())
 		throw std::exception("Unable to open file!");
+
+	name.loadFromBinaryFile(ifs);
 
 	ifs.read(reinterpret_cast<char*>(&size), sizeof(size_t));
 
@@ -117,6 +121,16 @@ void Database::setValue(unsigned tableIndex, OptionalString&& value, unsigned ro
 void Database::addValue(unsigned tableIndex, unsigned columnIndex, const OptionalString& value)
 {
 	tables[tableIndex]->addValue(value, columnIndex);
+}
+
+void Database::addColumn(unsigned tableIndex, Column* col)
+{
+	tables[tableIndex]->addColumn(col);
+}
+
+void Database::removeColumn(unsigned tableIndex, unsigned colIndex)
+{
+	tables[tableIndex]->removeColumn(colIndex);
 }
 
 void Database::copyFrom(const Database& other)

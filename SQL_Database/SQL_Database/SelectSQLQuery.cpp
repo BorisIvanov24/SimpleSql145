@@ -33,14 +33,15 @@ SQLResponse SelectSQLQuery::execute()
 			colIds.pushBack(i);
 	}
 	else
-		numberOfCols = cols.getSize();
-
-	for (unsigned i = 0; i < cols.getSize(); i++)
 	{
-		for (unsigned j = 0; j < table.getColsCount(); j++)
+		numberOfCols = cols.getSize();
+		for (unsigned i = 0; i < cols.getSize(); i++)
 		{
-			if (cols[i] == table.getColumnName(j))
-				colIds.pushBack(j);
+			for (unsigned j = 0; j < table.getColsCount(); j++)
+			{
+				if (cols[i] == table.getColumnName(j))
+					colIds.pushBack(j);
+			}
 		}
 	}
 
@@ -54,7 +55,7 @@ SQLResponse SelectSQLQuery::execute()
 		if (expression == nullptr)
 			expressionValues.pushBack(true);
 		else
-			expressionValues.pushBack(expression->evaluate(table, j));
+			expressionValues.pushBack(expression->evaluate(table, j));	
 
 		if (expressionValues[j])
 			trueCount++;
@@ -62,9 +63,11 @@ SQLResponse SelectSQLQuery::execute()
 		//std::cout << expressionValues[j] << std::endl;
 	}
 
+	
 	for (unsigned i = 0; i < colIds.getSize(); i++)
 	{
 		Column* ptr = new Column(table.getColumnName(colIds[i]), table.getColumnType(colIds[i]));
+
 		for (unsigned j = 0; j < table.getRowsCount(); j++)
 		{
 			if (expressionValues[j])

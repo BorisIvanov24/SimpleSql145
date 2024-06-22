@@ -23,6 +23,8 @@ public:
 	const Table& getTable(unsigned index) const;
 	void setValue(unsigned tableIndex, OptionalString&& value, unsigned rowIndex, unsigned colIndex);
 	void addValue(unsigned tableIndex, unsigned columnIndex, const OptionalString& value);
+	void addColumn(unsigned tableIndex, Column* col);
+	void removeColumn(unsigned tableIndex, unsigned colIndex);
 
 	SQLResponse executeQuery(const MyString& query);
 

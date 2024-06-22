@@ -206,6 +206,7 @@ void OptionalString::resize(unsigned newAllocatedDataSize)
 
 void OptionalString::free()
 {
+    if(_data!=nullptr)
     delete[] _data;
 }
 

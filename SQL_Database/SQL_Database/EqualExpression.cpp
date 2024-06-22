@@ -19,9 +19,12 @@ bool EqualExpression::evaluate(const Table& table, unsigned rowIndex) const
 		}
 	}
 
+	if (!table.getValue(rowIndex, columnIndex).hasValue() && strcmp(right.c_str(), "NULL)") == 0)
+		return true;
+
 	if (!table.getValue(rowIndex, columnIndex).hasValue())
 		return false;
-
+	
 	switch (table.getColumnType(columnIndex))
 	{
 		case ColumnType::INTEGER:

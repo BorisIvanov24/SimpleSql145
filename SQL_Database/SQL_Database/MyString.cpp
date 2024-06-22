@@ -208,6 +208,9 @@ void MyString::free()
 void MyString::copyFrom(const MyString& other)
 {
     _allocatedDataSize = other._allocatedDataSize;
+
+    //std::cout << _allocatedDataSize << std::endl;
+
     _data = new char[_allocatedDataSize];
     std::strcpy(_data, other._data);
     _size = other._size;

@@ -127,6 +127,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AddColumnSQLQuery.cpp" />
+    <ClCompile Include="AlterTableSQLQuery.cpp" />
     <ClCompile Include="BinaryLogicalExpression.cpp" />
     <ClCompile Include="BinaryOperatorExpression.cpp" />
     <ClCompile Include="Column.cpp" />
@@ -134,6 +136,7 @@
     <ClCompile Include="CreateTableSQLQuery.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="DisjunctionExpression.cpp" />
+    <ClCompile Include="DropColumnSQLQuery.cpp" />
     <ClCompile Include="EqualExpression.cpp" />
     <ClCompile Include="Expression.cpp" />
     <ClCompile Include="ExpressionFactory.cpp" />
@@ -153,6 +156,8 @@
     <ClCompile Include="TablePrinter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddColumnSQLQuery.h" />
+    <ClInclude Include="AlterTableSQLQuery.h" />
     <ClInclude Include="BinaryLogicalExpression.h" />
     <ClInclude Include="BinaryOperatorExpression.h" />
     <ClInclude Include="Column.h" />
@@ -160,6 +165,7 @@
     <ClInclude Include="CreateTableSQLQuery.h" />
     <ClInclude Include="Database.h" />
     <ClInclude Include="DisjunctionExpression.h" />
+    <ClInclude Include="DropColumnSQLQuery.h" />
     <ClInclude Include="EqualExpression.h" />
     <ClInclude Include="Expression.h" />
     <ClInclude Include="ExpressionFactory.h" />
