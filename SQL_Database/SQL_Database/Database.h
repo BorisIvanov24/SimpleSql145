@@ -1,5 +1,6 @@
 #pragma once
 #include "Table.h"
+#include "MyString.h"
 #include "MyVector.hpp"
 #include "SQLResponse.h"
 
@@ -7,7 +8,7 @@ class Database
 {
 public:
 	Database();
-	Database(const MyString& name);
+	Database(const MyString& filePath);
 	Database(const Database& other);
 	Database(Database&& other) noexcept;
 	Database& operator=(const Database& other);
@@ -15,21 +16,23 @@ public:
 	~Database();
 
 	void addTable(Table* table);
-	void saveToBinaryFile(const MyString& fileName) const;
-	void loadFromBinaryFile(const MyString& fileName);
+	void saveToBinaryFile() const;
+	void loadFromBinaryFile();
 	
-	const MyString& getName() const;
 	size_t getSize() const;
 	const Table& getTable(unsigned index) const;
 	void setValue(unsigned tableIndex, OptionalString&& value, unsigned rowIndex, unsigned colIndex);
 	void addValue(unsigned tableIndex, unsigned columnIndex, const OptionalString& value);
 	void addColumn(unsigned tableIndex, Column* col);
 	void removeColumn(unsigned tableIndex, unsigned colIndex);
+	void setTableColumnName(unsigned tableIndex, unsigned colIndex, MyString&& newColName);
+	void removeRow(unsigned tableIndex, unsigned rowIndex);
+	void removeTable(unsigned tableIndex);
 
 	SQLResponse executeQuery(const MyString& query);
 
 private:
-	MyString name;
+	MyString filePath;
 	Table** tables = nullptr;
 	size_t size = 0; //number of tables in the database
 	size_t capacity = 0;

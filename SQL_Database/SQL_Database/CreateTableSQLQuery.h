@@ -12,9 +12,8 @@ public:
 	CreateTableSQLQuery(const CreateTableSQLQuery& other) = delete;
 	CreateTableSQLQuery& operator=(const CreateTableSQLQuery) = delete;
 
-	//the destructor of MyVector will only delete the array of pointers
-	//we need to manually delete the memory that every pointer points to
-	~CreateTableSQLQuery();
+	// tezi pointeri v vectora ne trqbva da gi triem zashtoto prehvurlqme otgovornostta
+	//za tqh na bazata
 private:
 	MyString name;
 	MyVector<Column*> columns;

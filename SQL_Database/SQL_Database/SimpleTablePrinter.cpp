@@ -7,7 +7,7 @@ SimpleTablePrinter& SimpleTablePrinter::getInstance()
     return obj;
 }
 
-void SimpleTablePrinter::print(const Table& table) const
+void SimpleTablePrinter::print(const Table& table, std::ostream& os) const
 {
     MyVector<size_t> maxLengths;
 
@@ -35,44 +35,44 @@ void SimpleTablePrinter::print(const Table& table) const
         }
     }
 
-    std::cout << '+';
+    os << '+';
     for (int i = 0; i < table.getColsCount(); i++)
     {
         for (int j = 0; j < maxLengths[i] + 2; j++)
         {
-            std::cout << '-';
+            os << '-';
         }
-        std::cout << '+';
+        os << '+';
     }
-    std::cout << std::endl;
+    os << std::endl;
 
-    std::cout << '|';
+    os << '|';
     for (int i = 0; i < table.getColsCount(); i++)
     {
-        std::cout << ' ';
+        os << ' ';
         size_t numberOfSpaces = maxLengths[i] - table.getColumnName(i).getSize();
         for (int j = 0; j < numberOfSpaces; j++)
         {
-            std::cout << ' ';
+            os << ' ';
         }
-        std::cout << table.getColumnName(i)<<" |";
+        os << table.getColumnName(i)<<" |";
     }
-    std::cout << std::endl;
+    os << std::endl;
 
-    std::cout << '+';
+    os << '+';
     for (int i = 0; i < table.getColsCount(); i++)
     {
         for (int j = 0; j < maxLengths[i] + 2; j++)
         {
-            std::cout << '-';
+            os << '-';
         }
-        std::cout << '+';
+        os << '+';
     }
-    std::cout << std::endl;
+    os << std::endl;
 
     for (int i = 0; i < table.getRowsCount(); i++)
     {
-        std::cout << '|';
+        os << '|';
         for (int j = 0; j < table.getColsCount(); j++)
         {
             size_t numberOfSpaces;
@@ -81,30 +81,30 @@ void SimpleTablePrinter::print(const Table& table) const
             else
                 numberOfSpaces = maxLengths[j] - 4; // because NULL
 
-            std::cout << ' ';
+            os << ' ';
             for (int k = 0; k < numberOfSpaces; k++)
             {
-                std::cout << ' ';
+                os << ' ';
             }
             
             if (table.getValue(i, j).hasValue())
-                std::cout << table.getValue(i, j);
+                os << table.getValue(i, j);
             else
-                std::cout << "NULL";
-            std::cout << " |";
+                os << "NULL";
+            os << " |";
         }
-        std::cout << std::endl;
+        os << std::endl;
     }
 
-    std::cout << '+';
+    os << '+';
     for (int i = 0; i < table.getColsCount(); i++)
     {
         for (int j = 0; j < maxLengths[i] + 2; j++)
         {
-            std::cout << '-';
+            os << '-';
         }
-        std::cout << '+';
+        os << '+';
     }
 
-    std::cout << std::endl;
+    os << std::endl;
 }

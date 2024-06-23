@@ -1,12 +1,14 @@
-#include "DropColumnSQLQuery.h"
+#include "RenameColumnSQLQuery.h"
 
-DropColumnSQLQuery::DropColumnSQLQuery(Database& db, MyString&& table, MyString&& colName) :
-									   AlterTableSQLQuery(db, std::move(table))
+RenameColumnSQLQuery::RenameColumnSQLQuery(Database& db, MyString&& table, 
+								           MyString&& colName, MyString&& newColName) :
+										   AlterTableSQLQuery(db, std::move(table))
 {
 	this->colName = std::move(colName);
+	this->newColName = std::move(newColName);
 }
 
-SQLResponse DropColumnSQLQuery::execute()
+SQLResponse RenameColumnSQLQuery::execute()
 {
 	int tableIndex = -1;
 
@@ -38,7 +40,7 @@ SQLResponse DropColumnSQLQuery::execute()
 		return SQLResponse("No such column, 0 rows affected");
 	}
 
-	database.removeColumn(tableIndex, colIndex);
+	database.setTableColumnName(tableIndex, colIndex, std::move(newColName));
 
 	return SQLResponse("Query OK, 0 rows affected");
 }

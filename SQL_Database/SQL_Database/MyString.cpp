@@ -180,7 +180,8 @@ std::ostream& operator<<(std::ostream& os, const MyString& obj)
 std::istream& operator>>(std::istream& is, MyString& ref)
 {
     char buff[1024];
-    is >> buff;
+    is.getline(buff, 1024);
+
     size_t buffStringSize = std::strlen(buff);
 
     if (buffStringSize > ref.getCapacity())

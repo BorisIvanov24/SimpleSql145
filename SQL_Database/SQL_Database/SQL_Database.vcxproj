@@ -135,8 +135,10 @@
     <ClCompile Include="ConjunctionExpression.cpp" />
     <ClCompile Include="CreateTableSQLQuery.cpp" />
     <ClCompile Include="Database.cpp" />
+    <ClCompile Include="DeleteSQLQuery.cpp" />
     <ClCompile Include="DisjunctionExpression.cpp" />
     <ClCompile Include="DropColumnSQLQuery.cpp" />
+    <ClCompile Include="DropTableSQLQuery.cpp" />
     <ClCompile Include="EqualExpression.cpp" />
     <ClCompile Include="Expression.cpp" />
     <ClCompile Include="ExpressionFactory.cpp" />
@@ -146,6 +148,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyString.cpp" />
     <ClCompile Include="OptionalString.cpp" />
+    <ClCompile Include="RenameColumnSQLQuery.cpp" />
     <ClCompile Include="SelectSQLQuery.cpp" />
     <ClCompile Include="ShowTablesSQLQuery.cpp" />
     <ClCompile Include="SimpleTablePrinter.cpp" />
@@ -154,6 +157,7 @@
     <ClCompile Include="SQLResponse.cpp" />
     <ClCompile Include="Table.cpp" />
     <ClCompile Include="TablePrinter.cpp" />
+    <ClCompile Include="UpdateSQLQuery.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AddColumnSQLQuery.h" />
@@ -164,8 +168,10 @@
     <ClInclude Include="ConjunctionExpression.h" />
     <ClInclude Include="CreateTableSQLQuery.h" />
     <ClInclude Include="Database.h" />
+    <ClInclude Include="DeleteSQLQuery.h" />
     <ClInclude Include="DisjunctionExpression.h" />
     <ClInclude Include="DropColumnSQLQuery.h" />
+    <ClInclude Include="DropTableSQLQuery.h" />
     <ClInclude Include="EqualExpression.h" />
     <ClInclude Include="Expression.h" />
     <ClInclude Include="ExpressionFactory.h" />
@@ -176,6 +182,7 @@
     <ClInclude Include="MyVector.hpp" />
     <ClInclude Include="Optional.hpp" />
     <ClInclude Include="OptionalString.h" />
+    <ClInclude Include="RenameColumnSQLQuery.h" />
     <ClInclude Include="SelectSQLQuery.h" />
     <ClInclude Include="ShowTablesSQLQuery.h" />
     <ClInclude Include="SimpleTablePrinter.h" />
@@ -184,6 +191,7 @@
     <ClInclude Include="SQLResponse.h" />
     <ClInclude Include="Table.h" />
     <ClInclude Include="TablePrinter.h" />
+    <ClInclude Include="UpdateSQLQuery.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

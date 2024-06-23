@@ -9,6 +9,12 @@ CreateTableSQLQuery::CreateTableSQLQuery(Database& database, MyVector<Column*>&&
 
 SQLResponse CreateTableSQLQuery::execute()
 {
+	for (int i = 0; i < database.getSize(); i++)
+	{
+		if (database.getTable(i).getName() == name)
+			return SQLResponse("Table already in db, 0 rows affected");
+	}
+
 	Table* table = new Table(name);
 	
 	for (int i = 0; i < columns.getSize(); i++)
@@ -18,13 +24,7 @@ SQLResponse CreateTableSQLQuery::execute()
 
 	database.addTable(table);
 
-	return SQLResponse("Query OK");
+	return SQLResponse("Query OK\n");
 }
 
-CreateTableSQLQuery::~CreateTableSQLQuery()
-{
-	for (int i = 0; i < columns.getSize(); i++)
-	{
-		delete columns[i];
-	}
-}
+

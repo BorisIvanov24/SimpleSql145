@@ -1,4 +1,6 @@
 #include "Database.h"
+#include "SQLQueryFactory.h"
+#include "SimpleTablePrinter.h"
 
 Database::Database()
 {
@@ -7,9 +9,10 @@ Database::Database()
 	capacity = 8;
 }
 
-Database::Database(const MyString& name) : Database()
+Database::Database(const MyString& filePath)
 {
-	this->name = name;
+	this->filePath = filePath;
+	loadFromBinaryFile();
 }
 
 Database::Database(const Database& other)
@@ -46,61 +49,77 @@ Database& Database::operator=(Database&& other) noexcept
 
 Database::~Database()
 {
+	saveToBinaryFile();
 	free();
 }
 
 void Database::addTable(Table* table)
 {
 	if (size == capacity)
-		resize(capacity * 2);
-
+	{
+		if (capacity == 0)
+			resize(2);
+		else
+			resize(2 * capacity);
+	}
 	tables[size++] = table;
 }
 
-void Database::saveToBinaryFile(const MyString& fileName) const
+void Database::saveToBinaryFile() const
 {
-	std::ofstream ofs(fileName.c_str(), std::ios::binary | std::ios::out);
+	std::ofstream ofs(filePath.c_str(), std::ios::binary | std::ios::out);
 
 	if (!ofs.is_open())
 		throw std::exception("Unable to open file!");
 
-	name.saveToBinaryFile(ofs);
+	filePath.saveToBinaryFile(ofs);
 
 	ofs.write(reinterpret_cast<const char*>(&size), sizeof(size_t));
 
 	for (int i = 0; i < size; i++)
 	{
-		tables[i]->saveToBinaryFile(ofs);
+		MyString fileToSaveTable;
+
+		fileToSaveTable += tables[i]->getName();
+		fileToSaveTable += ".ss145";
+
+		fileToSaveTable.saveToBinaryFile(ofs);
+
+		tables[i]->saveToBinaryFile(fileToSaveTable);
 	}
 }
 
-void Database::loadFromBinaryFile(const MyString& fileName)
+void Database::loadFromBinaryFile()
 {
 	free();
 
-	std::ifstream ifs(fileName.c_str(), std::ios::binary | std::ios::in);
+	std::ifstream ifs(filePath.c_str(), std::ios::binary | std::ios::in);
 
 	if (!ifs.is_open())
-		throw std::exception("Unable to open file!");
+		return;
 
-	name.loadFromBinaryFile(ifs);
+	filePath.loadFromBinaryFile(ifs);
 
 	ifs.read(reinterpret_cast<char*>(&size), sizeof(size_t));
 
 	if (size != 0)
 		tables = new Table* [size];
 
+	capacity = size;
+
 	for (int i = 0; i < size; i++)
 	{
 		tables[i] = new Table();
 
-		tables[i]->loadFromBinaryFile(ifs);
-	}
-}
+		MyString tableToLoad;
 
-const MyString& Database::getName() const
-{
-	return name;
+		tableToLoad.loadFromBinaryFile(ifs);
+
+		tables[i]->loadFromBinaryFile(tableToLoad);
+
+		//SimpleTablePrinter::getInstance().print(*tables[i], std::cout);
+		//std::cout << "\nCols Count: "<<tables[i]->getColsCount() << " \nRowsCount: " << tables[i]->getRowsCount() << std::endl;
+	}
 }
 
 size_t Database::getSize() const
@@ -133,6 +152,32 @@ void Database::removeColumn(unsigned tableIndex, unsigned colIndex)
 	tables[tableIndex]->removeColumn(colIndex);
 }
 
+void Database::setTableColumnName(unsigned tableIndex, unsigned colIndex, MyString&& newColName)
+{
+	tables[tableIndex]->setColumnName(colIndex, std::move(newColName));
+}
+
+void Database::removeRow(unsigned tableIndex, unsigned rowIndex)
+{
+	tables[tableIndex]->removeRow(rowIndex);
+}
+
+void Database::removeTable(unsigned tableIndex)
+{
+	size--;
+}
+
+SQLResponse Database::executeQuery(const MyString& query)
+{
+	SQLQuery* sql = SQLQueryFactory::makeQuery(query, *this);
+
+	SQLResponse response = sql->execute();
+
+	delete sql;
+
+	return response;
+}
+
 void Database::copyFrom(const Database& other)
 {
 	tables = new Table * [other.capacity] {nullptr};
@@ -142,7 +187,7 @@ void Database::copyFrom(const Database& other)
 		tables[i] = new Table(*(other.tables[i]));
 	}
 
-	name = other.name;
+	filePath = other.filePath;
 	size = other.size;
 	capacity = other.capacity;
 }
@@ -152,7 +197,7 @@ void Database::moveFrom(Database&& other)
 	tables = other.tables;
 	other.tables = nullptr;
 
-	name = std::move(name);
+	filePath = std::move(filePath);
 	size = other.size;
 	capacity = other.capacity;
 }

@@ -1,5 +1,6 @@
 #include "SelectSQLQuery.h"
 #include "SimpleTablePrinter.h"
+#include <sstream>
 #pragma warning(disable:4996)
 
 SelectSQLQuery::SelectSQLQuery(Database& database, MyVector<MyString>&& cols, 
@@ -13,7 +14,7 @@ SelectSQLQuery::SelectSQLQuery(Database& database, MyVector<MyString>&& cols,
 
 SQLResponse SelectSQLQuery::execute()
 {
-	unsigned tableIndex = 0;
+	int tableIndex = -1;
 
 	for (int i = 0; i < database.getSize(); i++)
 	{
@@ -21,9 +22,15 @@ SQLResponse SelectSQLQuery::execute()
 			tableIndex = i;
 	}
 
+	if (tableIndex == -1)
+	{
+		return SQLResponse("No such table, 0 rows affected\n");
+	}
+
 	const Table& table = database.getTable(tableIndex);
 	MyVector<unsigned> colIds;
 
+	//std::cout << table.getColsCount() << ' ' << table.getRowsCount() << std::endl;
 	unsigned numberOfCols;
 
 	if (cols.empty())
@@ -59,8 +66,6 @@ SQLResponse SelectSQLQuery::execute()
 
 		if (expressionValues[j])
 			trueCount++;
-
-		//std::cout << expressionValues[j] << std::endl;
 	}
 
 	
@@ -79,16 +84,26 @@ SQLResponse SelectSQLQuery::execute()
 		selectTable.addColumn(ptr);
 	}
 
-	SimpleTablePrinter::getInstance().print(selectTable);
+	std::stringstream ss("");
+
+	SimpleTablePrinter::getInstance().print(selectTable, ss);
 
 	char buffer[32];
 
-	MyString message(_itoa(trueCount, buffer, 10));
+	MyString message("\n");
+	message += _itoa(trueCount, buffer, 10);
 
 	if (trueCount > 1)
-		message += " rows in set";
+		message += " rows in set\n";
 	else
-		message += " row in set";
+		message += " row in set\n";
 	
-	return SQLResponse(message);
+	ss << message;
+
+	return SQLResponse(ss.str().c_str());
+}
+
+SelectSQLQuery::~SelectSQLQuery()
+{
+	delete expression;
 }

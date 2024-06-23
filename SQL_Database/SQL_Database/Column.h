@@ -26,10 +26,12 @@ public:
 	void loadFromBinaryFile(std::ifstream& ifs);
 	const MyString& getName() const;
 	void addValue(const OptionalString& value);
+	void removeValue(unsigned index);
 
 	const OptionalString& getValue(unsigned index);
 	ColumnType getColumnType() const;
 	size_t getSize() const;
+	void setName(MyString&& newName);
 
 private:
 	ColumnType type = ColumnType::NONE;

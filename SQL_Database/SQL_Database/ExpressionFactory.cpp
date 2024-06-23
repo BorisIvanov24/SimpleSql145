@@ -25,8 +25,7 @@ Expression* ExpressionFactory::makeExpression(const MyString& str)
 
 	index++;
 
-	//((col2) = (Boris)) and ((col3) = (3.14))
-	//(col2) > (34.4)
+	
 	switch (str[index])
 	{
 		case '>':

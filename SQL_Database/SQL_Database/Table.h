@@ -19,14 +19,16 @@ public:
 	ColumnType getColumnType(unsigned index) const;
 	void addColumn(Column* ptr);
 	void removeColumn(unsigned index);
+	void removeRow(unsigned index);
 
 	const MyString& getColumnName(unsigned index) const;
-	void saveToBinaryFile(std::ofstream& ofs) const;
-	void loadFromBinaryFile(std::ifstream& ifs);
+	void saveToBinaryFile(const MyString& fileName) const;
+	void loadFromBinaryFile(const MyString& fileName);
 
 	const OptionalString& getValue(unsigned rowIndex, unsigned colIndex) const;
 	void setValue(OptionalString&& value, unsigned rowIndex, unsigned colIndex);
 	void addValue(const OptionalString& value, unsigned columnIndex);
+	void setColumnName(unsigned colIndex, MyString&& newColName);
 
 	size_t getRowsCount() const;
 	size_t getColsCount() const;

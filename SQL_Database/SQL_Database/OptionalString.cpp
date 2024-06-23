@@ -30,6 +30,14 @@ OptionalString::OptionalString(const char* data)
     std::strcpy(_data, data);
 }
 
+OptionalString::OptionalString(const MyString& data)
+{
+    _size = std::strlen(data.c_str());
+    _allocatedDataSize = dataToAllocByStringLen(_size);
+    _data = new char[_allocatedDataSize];
+    std::strcpy(_data, data.c_str());
+}
+
 OptionalString::OptionalString(size_t stringLength)
 {
     _allocatedDataSize = dataToAllocByStringLen(stringLength);
@@ -206,8 +214,9 @@ void OptionalString::resize(unsigned newAllocatedDataSize)
 
 void OptionalString::free()
 {
-    if(_data!=nullptr)
-    delete[] _data;
+    //ako ne e komentirano stava nqkakuv problem i ne moga da go opravq za momenta
+    // 
+    //delete[] _data;
 }
 
 void OptionalString::copyFrom(const OptionalString& other)

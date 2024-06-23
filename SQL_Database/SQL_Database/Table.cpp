@@ -1,4 +1,5 @@
 #include "Table.h"
+#include "SimpleTablePrinter.h"
 
 Table::Table(const Table& other)
 {
@@ -67,10 +68,12 @@ void Table::addColumn(Column* ptr)
 	resize();
 	columns[size++] = ptr;
 
-	fillEmpty();
-
 	if (ptr->getSize() > rowsCount)
 		rowsCount = ptr->getSize();
+
+	fillEmpty();
+
+	
 }
 
 void Table::removeColumn(unsigned index)
@@ -96,13 +99,30 @@ void Table::removeColumn(unsigned index)
 	columns = temp;
 }
 
+void Table::removeRow(unsigned index)
+{
+
+	for (int i = 0; i < size; i++)
+	{
+		columns[i]->removeValue(index);
+	}
+	
+	rowsCount--;
+
+}
+
 const MyString& Table::getColumnName(unsigned index) const
 {
 	return (columns[index]->getName());
 }
 
-void Table::saveToBinaryFile(std::ofstream& ofs) const
+void Table::saveToBinaryFile(const MyString& fileName) const
 {
+	std::ofstream ofs(fileName.c_str(), std::ios::binary | std::ios::out);
+
+	if (!ofs.is_open())
+		throw std::invalid_argument("Couldn't open file");
+
 	name.saveToBinaryFile(ofs);
 
 	ofs.write(reinterpret_cast<const char*>(&size), sizeof(size_t));
@@ -114,9 +134,14 @@ void Table::saveToBinaryFile(std::ofstream& ofs) const
 	}
 }
 
-void Table::loadFromBinaryFile(std::ifstream& ifs)
+void Table::loadFromBinaryFile(const MyString& fileName)
 {
 	free();
+
+	std::ifstream ifs(fileName.c_str(), std::ios::binary | std::ios::in);
+
+	if (!ifs.is_open())
+		throw std::invalid_argument("Couldn't open file");
 
 	name.loadFromBinaryFile(ifs);
 
@@ -158,6 +183,11 @@ void Table::addValue(const OptionalString& value, unsigned columnIndex)
 {
 	columns[columnIndex]->addValue(value);
 	rowsCount++;
+}
+
+void Table::setColumnName(unsigned colIndex, MyString&& newColName)
+{
+	columns[colIndex]->setName(std::move(newColName));
 }
 
 size_t Table::getRowsCount() const

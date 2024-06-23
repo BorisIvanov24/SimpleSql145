@@ -1,11 +1,13 @@
 #pragma once
 #include <iostream>
+#include "MyString.h"
 
 class OptionalString {
 
 public:
     OptionalString() = default;
     OptionalString(const char* data);
+    OptionalString(const MyString& data);
 
     OptionalString(const OptionalString& other);
     OptionalString(OptionalString&& other) noexcept;

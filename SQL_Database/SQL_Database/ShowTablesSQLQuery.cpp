@@ -1,34 +1,36 @@
 #include "ShowTablesSQLQuery.h"
+#include <sstream>
 #pragma warning(disable : 4996)
 
-static void print(const Database& database, const MyString& header, size_t longestStrSize)
+static void print(const Database& database, const MyString& header, size_t longestStrSize,
+			      std::ostream& os)
 {
-	std::cout << '+';
+	os << '+';
 	for (int i = 0; i < longestStrSize + 2; i++)
-		std::cout << '-';
-	std::cout << '+' << std::endl;
+		os << '-';
+	os << '+' << std::endl;
 
-	std::cout << "| " << header << " |" << std::endl;
+	os << "| " << header << " |" << std::endl;
 	
-	std::cout << '+';
+	os << '+';
 	for (int i = 0; i < longestStrSize + 2; i++)
-		std::cout << '-';
-	std::cout << '+' << std::endl;
+		os << '-';
+	os << '+' << std::endl;
 
 	for (int i = 0; i < database.getSize(); i++)
 	{
-		std::cout << "| " << database.getTable(i).getName();
+		os << "| " << database.getTable(i).getName();
 		int startIndex = database.getTable(i).getName().getSize();
 		for (int j = startIndex; j < longestStrSize; j++)
 		{
-			std::cout << ' ';
+			os << ' ';
 		}
-		std::cout << " |" << std::endl;
+		os << " |" << std::endl;
 
-		std::cout << '+';
+		os << '+';
 		for (int i = 0; i < longestStrSize + 2; i++)
-			std::cout << '-';
-		std::cout << '+' << std::endl;
+			os << '-';
+		os << '+' << std::endl;
 	}
 }
 
@@ -44,7 +46,7 @@ SQLResponse ShowTablesSQLQuery::execute()
 	}
 
 	MyString header("Tables_in_");
-	header += database.getName();
+	header += "database";
 	size_t longestStrSize = header.getSize();
 
 	//calculating the size of the longest string
@@ -56,13 +58,21 @@ SQLResponse ShowTablesSQLQuery::execute()
 	}
 
 	//printing
-	print(database, header, longestStrSize);
+	std::stringstream ss("");
+
+	print(database, header, longestStrSize, ss);
 
 	char buffer[64];
-	MyString str(_itoa(database.getSize(), buffer, 10));
+	MyString str("\n");
 
-	if(database.getSize() > 1)
-	return SQLResponse(str+= " rows in set");
+	str += _itoa(database.getSize(), buffer, 10);
+
+	if (database.getSize() > 1)
+		str += " rows in set\n";
 	else
-	return SQLResponse(str += " row in set");
+		str += " row in set\n";
+
+	ss << str;
+
+	return SQLResponse(ss.str().c_str());
 }

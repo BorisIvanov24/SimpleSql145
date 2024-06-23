@@ -30,6 +30,8 @@ SQLResponse InsertIntoSQLQuery::execute()
 	unsigned index = 0;
 	size_t rowsCountStart = table.getRowsCount();
 
+	//std::cout << table.getColsCount() << ' ' << cols.getSize() << std::endl;
+
 	for (int i = 0; i < table.getColsCount(); i++)
 	{
 		for (int j = 0; j < cols.getSize(); j++)
@@ -54,6 +56,6 @@ SQLResponse InsertIntoSQLQuery::execute()
 	char buffer[16];
 	MyString text("Query OK, ");
 	text += _itoa(values.getSize(), buffer, 10);
-	text += " rows affected";
+	text += " rows affected\n";
 	return SQLResponse(text);
 }

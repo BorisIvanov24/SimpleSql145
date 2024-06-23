@@ -61,6 +61,11 @@ void Column::addValue(const OptionalString& value)
 	values.pushBack(value);
 }
 
+void Column::removeValue(unsigned index)
+{
+	values.erase(index);
+}
+
 const OptionalString& Column::getValue(unsigned index)
 {
 	if (index > getSize())
@@ -77,4 +82,9 @@ ColumnType Column::getColumnType() const
 size_t Column::getSize() const
 {
 	return values.getSize();
+}
+
+void Column::setName(MyString&& newName)
+{
+	this->name = std::move(newName);
 }
