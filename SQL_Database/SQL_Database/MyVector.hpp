@@ -179,6 +179,8 @@ void MyVector<T>::erase(unsigned index)
 template <typename T>
 void MyVector<T>::free()
 {
+	//std::cout << "Vector delete size: " << size<<std::endl;
+
 	delete[] data;
 	size = 0;
 	capacity = 0;

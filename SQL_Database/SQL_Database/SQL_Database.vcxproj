@@ -143,6 +143,7 @@
     <ClCompile Include="Expression.cpp" />
     <ClCompile Include="ExpressionFactory.cpp" />
     <ClCompile Include="GreaterThanExpression.cpp" />
+    <ClCompile Include="InnerJoinSQLQuery.cpp" />
     <ClCompile Include="InsertIntoSQLQuery.cpp" />
     <ClCompile Include="LowerThanExpression.cpp" />
     <ClCompile Include="main.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="Expression.h" />
     <ClInclude Include="ExpressionFactory.h" />
     <ClInclude Include="GreaterThanExpression.h" />
+    <ClInclude Include="InnerJoinSQLQuery.h" />
     <ClInclude Include="InsertIntoSQLQuery.h" />
     <ClInclude Include="LowerThanExpression.h" />
     <ClInclude Include="MyString.h" />

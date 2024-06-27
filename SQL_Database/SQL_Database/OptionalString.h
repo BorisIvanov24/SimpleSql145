@@ -36,6 +36,14 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const OptionalString& obj);
     friend std::istream& operator>>(std::istream& is, OptionalString& ref);
     friend OptionalString operator+(const OptionalString& lhs, const OptionalString& rhs);
+    
+    friend bool operator==(const OptionalString& lhs, const OptionalString& rhs);
+    friend bool operator!=(const OptionalString& lhs, const OptionalString& rhs);
+    friend bool operator<=(const OptionalString& lhs, const OptionalString& rhs);
+    friend bool operator<(const OptionalString& lhs, const OptionalString& rhs);
+    friend bool operator>=(const OptionalString& lhs, const OptionalString& rhs);
+    friend bool operator>(const OptionalString& lhs, const OptionalString& rhs);
+
 private:
     explicit OptionalString(size_t stringLength);
     void resize(unsigned newAllocatedDataSize);

@@ -50,7 +50,6 @@ SQLResponse UpdateSQLQuery::execute()
 	{
 		if (exp == nullptr || exp->evaluate(database.getTable(tableIndex), i))
 		{
-			std::cout << i << std::endl;
 			rowsAffected++;
 
 			if(value == "NULL")

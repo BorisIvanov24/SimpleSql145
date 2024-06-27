@@ -10,6 +10,7 @@
 #include "UpdateSQLQuery.h"
 #include "DeleteSQLQuery.h"
 #include "DropTableSQLQuery.h"
+#include "InnerJoinSQLQuery.h"
 
 enum class QueryType
 {
@@ -22,7 +23,8 @@ enum class QueryType
     ADD_COLUMN,
     UPDATE,
     DELETE,
-    DROP_TABLE
+    DROP_TABLE,
+    JOIN
 };
 
 const char* showTablesQuery = "show tables";
@@ -219,6 +221,43 @@ static SQLQuery* makeInsertIntoQuery(const MyString& str, Database& db)
     return new InsertIntoSQLQuery(db, std::move(tableName), std::move(cols), std::move(values));
 }
 
+static SQLQuery* makeJoinQuery(const MyString& str, Database& db,
+    MyVector<MyString>&& cols, MyString&& table1)
+{
+    unsigned index = 0;
+
+    MyString table2;
+
+    while (str[index] != ' ')
+    {
+        table2 += str[index];
+        index++;
+    }
+
+    index += 4;
+
+    MyString col1;
+    MyString col2;
+
+    while (str[index] != '=')
+    {
+        col1 += str[index];
+        index++;
+    }
+
+    index++;
+
+    while (index < str.getSize())
+    {
+        col2 += str[index];
+        index++;
+    }
+
+
+    return new InnerJoinSQLQuery(db, std::move(cols), std::move(table1), std::move(table2),
+        std::move(col1), std::move(col2));
+}
+
 static SQLQuery* makeSelectQuery(const MyString& str, Database& db)
 {
     MyVector<MyString> cols;
@@ -264,10 +303,23 @@ static SQLQuery* makeSelectQuery(const MyString& str, Database& db)
 
     //std::cout << tempStr << ' ' << str[index] << std::endl;
     tables.pushBack(std::move(tempStr));
+    
+    MyString tempStr2;
+    unsigned index2 = index;
 
     //std::cout << str.substr(index + 7, str.getSize() - index) << std::endl;
     if (index != str.getSize())
     {
+        for (int i = 0; i < 4; i++)
+        {
+            index2++;
+            tempStr2 += str[index2];
+        }
+
+        if (tempStr2 == "join")
+            return makeJoinQuery(str.substr(index2 + 2, str.getSize() - (index2 + 2)), db,
+                std::move(cols), std::move(tables[0]));
+
         exp = ExpressionFactory::makeExpression(str.substr(index + 7, str.getSize() - index));
     }
 
@@ -467,6 +519,7 @@ static SQLQuery* makeDropTableQuery(const MyString& str, Database& db)
 
     return new DropTableSQLQuery(db, std::move(table));
 }
+
 
 SQLQuery* SQLQueryFactory::makeQuery(const MyString& str, Database& db)
 {

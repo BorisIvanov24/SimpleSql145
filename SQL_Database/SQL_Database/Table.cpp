@@ -228,6 +228,7 @@ void Table::moveFrom(Table&& other)
 
 void Table::free()
 {
+
 	for (int i = 0; i < size; i++)
 	{
 		delete columns[i];

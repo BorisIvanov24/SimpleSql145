@@ -2,8 +2,9 @@
 #include <cstring>
 #include <algorithm>
 #include <fstream>
-#pragma warning (disable : 4996)
+#include <stdexcept>
 
+#pragma warning(disable : 4996)
 
 static unsigned roundToPowerOfTwo(unsigned v)
 {
@@ -50,11 +51,11 @@ OptionalString::OptionalString(const OptionalString& other)
 {
     copyFrom(other);
 }
+
 OptionalString::OptionalString(OptionalString&& other) noexcept
 {
     moveFrom(std::move(other));
 }
-
 
 void OptionalString::moveFrom(OptionalString&& other)
 {
@@ -67,7 +68,6 @@ void OptionalString::moveFrom(OptionalString&& other)
     _allocatedDataSize = other._allocatedDataSize;
     other._allocatedDataSize = 0;
 }
-
 
 OptionalString& OptionalString::operator=(const OptionalString& other)
 {
@@ -87,7 +87,6 @@ OptionalString& OptionalString::operator=(OptionalString&& other) noexcept
     }
     return *this;
 }
-
 
 OptionalString::~OptionalString()
 {
@@ -111,29 +110,28 @@ size_t OptionalString::getSize() const
 
 void OptionalString::clear()
 {
-    _size = 0;
+    if (_data) {
+        _data[0] = '\0';
+        _size = 0;
+    }
 }
 
 void OptionalString::saveToBinaryFile(std::ofstream& ofs) const
 {
     ofs.write(reinterpret_cast<const char*>(&_size), sizeof(size_t));
-
-    if(_size!=0)
-    ofs.write(reinterpret_cast<const char*>(_data), _size * sizeof(char));
+    if (_size != 0) {
+        ofs.write(reinterpret_cast<const char*>(_data), _size * sizeof(char));
+    }
 }
 
 void OptionalString::loadFromBinaryFile(std::ifstream& ifs)
 {
     free();
-
     ifs.read(reinterpret_cast<char*>(&_size), sizeof(size_t));
-
-    if (_size != 0)
-    {
-        _data = new char[_size + 1];
+    if (_size != 0) {
+        _allocatedDataSize = dataToAllocByStringLen(_size);
+        _data = new char[_allocatedDataSize];
         _data[_size] = '\0';
-        _allocatedDataSize = _size;
-
         ifs.read(_data, _size * sizeof(char));
     }
 }
@@ -145,26 +143,19 @@ const char* OptionalString::c_str() const
 
 OptionalString& OptionalString::operator+=(const OptionalString& other)
 {
-    if (getSize() + other.getSize() + 1 > _allocatedDataSize)
+    if (getSize() + other.getSize() + 1 > _allocatedDataSize) {
         resize(dataToAllocByStringLen(getSize() + other.getSize()));
+    }
 
-    // we need to use strncat instead of strcat, because strcat will not work for str += str 
-    // (the terminating zero of str will be destroyed by the first char)
     std::strncat(_data, other._data, other.getSize());
-
     _size = getSize() + other.getSize();
     return *this;
 }
 
 OptionalString& OptionalString::operator+=(char ch)
 {
-    if (_size == _allocatedDataSize || _size + 1 == _allocatedDataSize)
-    {
-        if(_allocatedDataSize != 0)
-        resize(2 * _allocatedDataSize);
-        else
-        resize(8);
-
+    if (_size + 1 >= _allocatedDataSize) {
+        resize(_allocatedDataSize ? 2 * _allocatedDataSize : 8);
     }
     _data[_size++] = ch;
     _data[_size] = '\0';
@@ -173,12 +164,18 @@ OptionalString& OptionalString::operator+=(char ch)
 
 char& OptionalString::operator[](size_t index)
 {
-    return _data[index]; // no security check!!
+    if (index >= _size) {
+        throw std::out_of_range("Index out of range");
+    }
+    return _data[index];
 }
 
 const char& OptionalString::operator[](size_t index) const
 {
-    return _data[index]; // no security check!!
+    if (index >= _size) {
+        throw std::out_of_range("Index out of range");
+    }
+    return _data[index];
 }
 
 std::ostream& operator<<(std::ostream& os, const OptionalString& obj)
@@ -192,44 +189,42 @@ std::istream& operator>>(std::istream& is, OptionalString& ref)
     is >> buff;
     size_t buffStringSize = std::strlen(buff);
 
-    if (buffStringSize > ref.getCapacity())
+    if (buffStringSize > ref.getCapacity()) {
         ref.resize(dataToAllocByStringLen(buffStringSize));
+    }
 
-    strcpy(ref._data, buff);
+    std::strcpy(ref._data, buff);
     ref._size = buffStringSize;
     return is;
 }
 
 void OptionalString::resize(unsigned newAllocatedDataSize)
 {
-    char* newData = new char[newAllocatedDataSize + 1];
-    
-    if (_data != nullptr)
-    std::strcpy(newData, _data);
-    
-    delete[] _data;
+    char* newData = new char[newAllocatedDataSize];
+    if (_data != nullptr) {
+        std::strcpy(newData, _data);
+        delete[] _data;
+    }
     _data = newData;
     _allocatedDataSize = newAllocatedDataSize;
 }
 
 void OptionalString::free()
 {
-    //ako ne e komentirano stava nqkakuv problem i ne moga da go opravq za momenta
-    // 
-    //delete[] _data;
+    delete[] _data;
+    _data = nullptr;
+    _size = 0;
+    _allocatedDataSize = 0;
 }
 
 void OptionalString::copyFrom(const OptionalString& other)
 {
     _allocatedDataSize = other._allocatedDataSize;
-    
-    if (other._data == nullptr)
-    {
+    if (other._data == nullptr) {
         _data = nullptr;
         _size = 0;
     }
-    else
-    {
+    else {
         _data = new char[_allocatedDataSize];
         std::strcpy(_data, other._data);
         _size = other._size;
@@ -239,23 +234,35 @@ void OptionalString::copyFrom(const OptionalString& other)
 OptionalString operator+(const OptionalString& lhs, const OptionalString& rhs)
 {
     OptionalString result(lhs.getSize() + rhs.getSize());
-    result += lhs; // no resize is needed
+    result += lhs;
     result += rhs;
     return result;
 }
 
 bool operator==(const OptionalString& lhs, const OptionalString& rhs)
 {
+    if (!lhs.hasValue() && !rhs.hasValue())
+        return true;
+
     return std::strcmp(lhs.c_str(), rhs.c_str()) == 0;
 }
 
 bool operator!=(const OptionalString& lhs, const OptionalString& rhs)
 {
+    if ((!lhs.hasValue() && rhs.hasValue()) || (lhs.hasValue() && !rhs.hasValue()))
+        return true;
+
+    if (!lhs.hasValue() && !rhs.hasValue())
+        return false;
+
     return std::strcmp(lhs.c_str(), rhs.c_str()) != 0;
 }
 
 bool operator<(const OptionalString& lhs, const OptionalString& rhs)
 {
+    if ((!lhs.hasValue() && rhs.hasValue()) || (lhs.hasValue() && !rhs.hasValue()))
+        return false;
+
     return std::strcmp(lhs.c_str(), rhs.c_str()) < 0;
 }
 
